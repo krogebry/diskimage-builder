@@ -1,0 +1,8 @@
+#!/bin/bash
+sudo umount mnt/proc
+sudo umount mnt/dev
+sudo umount mnt/sys
+sudo umount mnt
+sudo qemu-nbd -d /dev/nbd0 
+sudo kill -9 `ps auxww|grep nbd|awk '{print $2}'`
+
