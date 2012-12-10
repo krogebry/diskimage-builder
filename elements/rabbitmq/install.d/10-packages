@@ -1,0 +1,6 @@
+#!/bin/bash
+##
+# Install rabbitmq service.
+
+DEBIAN_FRONTEND=noninteractive apt-get -y install rabbitmq-server
+
