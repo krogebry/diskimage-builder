@@ -1,0 +1,6 @@
+#!/bin/bash
+##
+# Configure the chef server service
+
+## Do stuff.
+echo "Configuring"

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+## Bootstrap basenode bits into the new server.
+echo "Bootstraping."
+
