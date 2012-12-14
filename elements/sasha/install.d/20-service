@@ -1,0 +1,17 @@
+#!/bin/bash
+##
+# Installs the sasha service from source.
+
+set -e
+set -o xtrace
+
+WEBROOT=/var/webapps/sasha
+
+git clone git@git.hpcloud.net:krogerb/sasha.git ${WEBROOT}
+
+cd $WEBROOT
+bundle update
+RAILS_ENV='production' rake db:migrate 
+chown -R www-data:www-data $WEBROOT
+chmod -R 775 $WEBROOT
+

@@ -1,0 +1,8 @@
+##
+# Install required software for the sasha service.
+
+set -e
+set -o xtrace
+
+#DEBIAN_FRONTEND=noninteractive apt-get -y install
+
