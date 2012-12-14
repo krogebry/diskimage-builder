@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./bin/disk-image-create -o base_vm_local base vm local-config

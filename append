@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./bin/disk-image-append -i `pwd`/base_vm_local.qcow2 -o base_vm_local_chef chef-client
