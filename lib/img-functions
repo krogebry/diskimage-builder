@@ -39,7 +39,7 @@ function cleanup () {
 }
 
 function ensure_nbd () {
-    NBD=`which qemu-nbd`
+    NBD=`which qemu-nbd` || true
     if [ -z "$NBD" ];  then
         echo "Need qemu-nbd to build qcow2 files."
 	sudo apt-get install qemu-utils
@@ -165,7 +165,7 @@ function finalise_base () {
 
 function compress_image () {
     # Recreate our image to throw away unnecessary data
-    qemu-img convert -c $TMP_IMAGE_PATH -O qcow2 $TMP_IMAGE_PATH-new
+    qemu-img convert ${COMPRESS_IMAGE:+-c} $TMP_IMAGE_PATH -O qcow2 $TMP_IMAGE_PATH-new
     rm $TMP_IMAGE_PATH
     mv $TMP_IMAGE_PATH-new $TMP_IMAGE_PATH
 }
@@ -216,20 +216,11 @@ function unblock_daemons () {
 function do_pre_install () {
   block_daemons
   block_apt_translations
-  # Install baseline packages and tools
-  run_in_target apt-get -y update
-  run_in_target apt-get -y install python-software-properties
-  run_in_target add-apt-repository -y ppa:tripleo/demo
-  # Uncomment to get the bleeding edge - this should be an element thing.
-  # run_in_target add-apt-repository -y ppa:tripleo/demo-staging
   # Run pre-install scripts. These do things that prepare the chroot for package installs
   run_d_in_target pre-install
-  run_in_target apt-get -y update
 }
 
 function do_install () {
-  # These are useful, or at worst not harmful, for all imges we build.
-  run_in_target apt-get -y install linux-image-generic vlan open-iscsi
   # Call install scripts to pull in the software users want.
   run_d_in_target install
   unblock_daemons
