@@ -1,15 +1,16 @@
 Image building tools for Openstack
 ==================================
 
-These tools are the components of tripleo (https://github.com/tripleo/demo)
+These tools are the components of tripleo (https://github.com/tripleo/incubator)
 that do the plumbing involved in building disk images. Specific configs live
-in the demo repository, while the reusable tools live here.
+in the incubator repository, while the reusable tools live here.
 
 What tools are there?
 ---------------------
 
 * disk-image-create -o filename {element} [{element} ...] : Create an image of
-  element {element}, optionally mixing in other elements.
+  element {element}, optionally mixing in other elements. You will usually want
+  to include the "base" element in your image.
 
 * ramdisk-image-create -o filename {element} [{element} ...] : Create a kernel+
   ramdisk pair for running maintenance on bare metal machines (deployment,
@@ -124,6 +125,90 @@ Ramdisk elements support the following files in their element directories:
 
 * init : a POSIX shell script fragment that will be appended to the default
   script executed as the ramdisk is booted (/init)
+
+Structure of an element
+-----------------------
+
+The above-mentioned global content can be further broken down in a way that
+encourages composition of elements and reusability of their components. One
+possible approach to this would be to label elements as either a "driver",
+"service", or "config" element. Below are some examples.
+
+- Driver-specific elements should only contain the necessary bits for that
+  driver:
+      elements/
+         driver-mellanox/
+            init           - modprobe line
+            install.d/
+               10-mlx      - package installation
+
+- An element that installs and configures Nova might be a bit more complex:
+      elements/
+         service-nova/
+            pre-install.d/
+               50-my-ppa   - add a PPA
+            install.d/
+               10-user     - common Nova user accts
+               50-my-pack  - install packages from my PPA
+               60-nova     - install nova and some dependencies
+            first-boot.d/
+               60-nova     - do some post-install config for nova
+
+- In the general case, configuration should probably be handled either by the
+  meta-data service (eg, during first-boot.d) or via normal CM tools
+  (eg, salt). That being said, it may occasionally be desirable to create a
+  set of elements which express a distinct configuration of the same software
+  components. For example, if one were to bake a region-specific SSL cert into
+  the images deployed in each region, one might express it like this:
+      elements/
+         config-az1/
+            first-boot.d/
+               20-ssl      - add the az1 certificate
+         config-az2/
+            first-boot.d/
+               20-ssl      - add the az2 certificate
+
+In this way, depending on the hardware and in which availability zone it is
+to be deployed, an image would be composed of:
+
+  zero or more driver-elements
+  one or more service-elements
+  zero or more config-elements
+
+It should be noted that this is merely a naming convention to assist in
+managing elements. Diskimage-builder is not, and should not be, functionally
+dependent upon specific element names.
+
+Debugging elements
+------------------
+
+Export 'break' to drop to a shell during the image build. Break points can be
+set either before or after any of the hook points by exporting
+"break=[before|after]-hook-name". Multiple break points can be specified as a
+comma-delimited string. Some examples:
+
+* break=before-block-device-size will break before the block device size hooks
+  are called.
+
+* break=after-first-boot,before-pre-install will break after the first-boot
+  hooks and before the pre-install hooks.
+
+Testing Elements
+----------------
+
+Elements can be tested using python. To create a test:
+
+* Create a directory called 'tests' in the element directory.
+
+* Create an empty file called '\_\_init\_\_.py' to make it into a python
+  package.
+
+* Create your test files as 'test\_whatever.py', using regular python test
+  code.
+
+To run all the tests use testr - `testr run`. To run just some tests provide
+one or more regex filters - tests matching any of them are run -
+`testr run apt-proxy`.
 
 Third party elements
 --------------------
