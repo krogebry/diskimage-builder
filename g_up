@@ -1,0 +1,4 @@
+#!/bin/bash
+
+glance image-create --name chef2 --container-format bare --disk-format qcow2 --file /mnt/images/base_vm_local_chef.qcow2
+

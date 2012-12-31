@@ -1,0 +1,15 @@
+#!/usr/bin/ruby
+##
+# Create a heat file based on a template
+require 'rubygems'
+require 'pp'
+require 'json'
+
+#pp ENV
+fs_root = File.realpath(File.dirname( __FILE__ ))
+puts "Local: %s" % fs_root
+
+fs_tmp_file = JSON::parse(File.read( "%s/heat/Sasha.template" % fs_root ))
+
+pp fs_tmp_file
+
