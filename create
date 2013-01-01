@@ -1,3 +1,4 @@
 #!/bin/bash
 
-./bin/disk-image-create -o base_vm_local base vm local-config
+./bin/disk-image-create -o keystone keystone base vm local-config
+./bin/disk-image-create -o glance-api base vm local-config
