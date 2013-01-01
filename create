@@ -1,4 +1,13 @@
 #!/bin/bash
 
-./bin/disk-image-create -o keystone keystone base vm local-config
-./bin/disk-image-create -o glance-api base vm local-config
+#BUILD_ID=`uuid`
+BUILD_ID="77186480-35ec-0130-cf7a-02163e214e11"
+
+#./bin/disk-image-create -o keystone keystone base vm local-config
+#./bin/disk-image-create -o glance-api glance-api base vm local-config
+
+#glance -d image-create --disk-format qcow2 --container-format bare --file keystone.qcow2  --name keystone-$BUILD_ID
+#glance -d image-create --disk-format qcow2 --container-format bare --file glance-api.qcow2  --name glance-$BUILD_ID
+
+cd heat
+./heat-create.rb
