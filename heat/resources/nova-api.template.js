@@ -17,9 +17,9 @@
       "Type": "AWS::EC2::Instance",
       "Metadata" : { },
       "Properties": {
-        "ImageId" : "nova-api-current",
-        "InstanceType"   : { "Ref" : "GlanceAPI-InstanceType" },
-        "KeyName"        : { "Ref" : "KeyName" },
+        "ImageId": { "Ref": "NovaAPI-InstanceId" },
+        "KeyName": { "Ref" : "KeyName" },
+        "InstanceType": { "Ref" : "NovaAPI-InstanceType" },
         "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
           "#!/bin/bash -v\n",
           "# Helper function\n",
