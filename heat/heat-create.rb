@@ -5,52 +5,63 @@ require 'rubygems'
 require 'pp'
 require 'uuid'
 require 'json'
+require 'logger'
 require "hash_deep_merge"
 
-output_json = JSON::parse(File.read( "resources/base.template.js" ))
+build_id = ARGV[0]
+stack_name = ARGV[1]
 
-Dir.glob( "resources/*.js" ).each do |resource|
-  next if(File.basename(resource) == "base.template.js")
+fs_root = File.expand_path(File.dirname( __FILE__ ))
+fs_build_dir = "%s/builds" % fs_root
+fs_resources_dir = "%s/resources" % fs_root
+fs_unique_build_dir = "%s/%s" % [fs_build_dir,build_id] 
 
-  puts "Merging: %s" % resource 
-  merge_json = JSON::parse(File.read( resource ))
+ALog = Logger.new( STDOUT )
 
-  output_json.deep_merge( merge_json )
+
+        # "ImageId": { "Fn::Join": [ "-", "broker", { "Ref": "BuildId" }]},
+                # "KeyName": { "Fn::Join": [ "-", "key", { "Ref": "BuildId" }]},
+
+
+
+begin
+  ## Everyone get this.
+  output_json = JSON::parse(File.read( "%s/base.template.js" % fs_resources_dir ))
+ 
+rescue => e
+  ALog::fatal( "Unable to parse base json: %s" % e )
+  exit
+end
+
+
+fs_stack_resources_dir = "%s/%s" % [fs_resources_dir,stack_name]
+Dir.glob( "%s/*.js" % fs_stack_resources_dir ).each do |resource|
+  #next if(File.basename(resource) == "base.template.js")
+
+  #puts "Merging: %s" % resource 
+  ALog.debug( "Merging resource: %s" % resource )
+
+  begin
+    merge_json = JSON::parse(File.read( resource ))
+    output_json.deep_merge( merge_json )
+
+  rescue => e
+    ALog::fatal( "Unable to parse base json: %s" % e )
+    #exit
+
+  end
 
   #pp output_json
   #puts "---------"
 end
 
-build_dir = "%s/builds" % ENV['PWD']
+Dir.mkdir( fs_build_dir ) if(!File.exists?( fs_build_dir ))
+Dir.mkdir( fs_unique_build_dir ) if(!File.exists?( fs_unique_build_dir ))
 
-build_id = ENV['BUILD_ID']
-
-output_json["Description"] = "NovaStack %s" % build_id
-
-#pp output_json
-
-Dir.mkdir( build_dir ) if(!File.exists?( build_dir ))
-Dir.mkdir( "%s/%s" % [build_dir,build_id] ) if(!File.exists?( "%s/%s" % [build_dir,build_id]))
-
-fs_output = "%s/%s/heat.js" % [build_dir,build_id]
+fs_output = "%s/heat.js" % fs_unique_build_dir
 
 File.open( fs_output, "w" ).puts( output_json.to_json )
 
-File.unlink( "%s/current" % build_dir ) if(File.exists?( "%s/current" % build_dir )) 
-File.symlink( "%s/%s" % [build_dir,build_id], "%s/current" % build_dir )
-
-params = { 
-  "KeyName" => "kp0",
-
-  "Keystone-InstanceId" => "keystone-%s" % build_id,
-  "Keystone-InstanceType" => "m1.large",
-
-  "GlanceAPI-InstanceId" => "glance-%s" % build_id,
-  "GlanceAPI-InstanceType" => "m1.large"
-
-}
-cmd_create_stack = "heat stack-create -f builds/current/heat.js -P \"%s\" openstack-%s" % [params.map{|k,v| "%s=%s" % [k,v]}.join( ";" ),UUID.generate]
-puts "CMD(create): %s" % cmd_create_stack
-
-system( cmd_create_stack )
+File.unlink( "%s/current" % fs_build_dir ) if(File.exists?( "%s/current" % fs_build_dir )) 
+File.symlink( fs_unique_build_dir, "%s/current" % fs_build_dir )
 

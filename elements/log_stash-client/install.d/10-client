@@ -1,0 +1,6 @@
+#!/bin/bash
+##
+# Install nginx service.
+
+DEBIAN_FRONTEND=noninteractive apt-get -y install nginx
+

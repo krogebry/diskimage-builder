@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#BUILD_ID=`uuid`
+#BUILD_ID="77186480-35ec-0130-cf7a-02163e214e11"
+#BUILD_ID="4fc4ce20-39f8-0130-9bab-3cd92b5434b6"
+BUILD_ID="5ada9410-3aaf-0130-9bad-3cd92b5434b6"
+
+mkdir images/${BUILD_ID}
+
+## Create a simple client that runs nginx.
+#./bin/disk-image-create -o images/${BUILD_ID}/client log_stash-jar log_stash-client base vm local-config
+#glance image-create --disk-format qcow2 --container-format bare --file images/${BUILD_ID}/client.qcow2 --name client-${BUILD_ID}
+
+## Clients deliver logs to the broker, which is basically just redis.
+./bin/disk-image-create -o images/${BUILD_ID}/broker redis heat-jeos base vm local-config
+glance image-create --disk-format qcow2 --container-format bare --file images/${BUILD_ID}/broker.qcow2 --name broker-${BUILD_ID}
+
+## The indexer talks to the broker for work items.
+#./bin/disk-image-create -o images/${BUILD_ID}/indexer log_stash-jar log_stash-indexer base vm local-config
+
+## The indexer writes it's data to the elastic search service.
+#./bin/disk-image-create -o images/${BUILD_ID}/elastic_search log_stash-elastic_search base vm local-config
+
+## Finally, we use the web interface to view the data from e_s.
+#./bin/disk-image-create -o images/${BUILD_ID}/log_web log_stash-web base vm local-config
+
+#glance -d image-create --disk-format qcow2 --container-format bare --file keystone.qcow2  --name keystone-$BUILD_ID
+#glance -d image-create --disk-format qcow2 --container-format bare --file glance-api.qcow2  --name glance-$BUILD_ID
+
+#cd heat
+#./heat-create.rb

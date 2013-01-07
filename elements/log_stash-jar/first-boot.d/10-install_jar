@@ -1,0 +1,10 @@
+#!/bin/sh
+##
+# Copy over the log_stash jar file.
+
+set -e
+set -o xtrace
+
+mkdir -p /opt/logstash
+
+cp -f $(dirname $0)/logstash-1.1.7-monolithic.jar /opt/logstash/
