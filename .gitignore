@@ -2,3 +2,4 @@
 .testrepository
 *.swp
 *.pyc
+heat/builds/*

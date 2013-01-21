@@ -48,8 +48,21 @@
       "Metadata" : { 
         "AWS::CloudFormation::Init": {
           "config" : {
+            "files": {
+              "/etc/cfn/cfn-credentials" : {
+                "content" : { "Fn::Join" : ["", [
+                  "AWSAccessKeyId=", { "Ref" : "BuildKeys" }, "\n",
+                  "AWSSecretKey=", {"Fn::GetAtt": ["BuildKeys", "SecretAccessKey"]}, "\n"
+                ]]},
+                "mode"    : "000400",
+                "owner"   : "root",
+                "group"   : "root"
+              }
+            },
             "packages" : {
-              "apt": { }
+              "yum": { 
+                "httpd": []
+              }
             }
           }
         }
@@ -57,8 +70,13 @@
       "Properties": {
         "ImageId": { "Fn::Join": [ "-", ["broker", { "Ref": "BuildId" }]]},
         "KeyName": { "Fn::Join": [ "-", ["key", { "Ref": "BuildId" }]]},
-        "InstanceType": { "Ref" : "broker-instance_type" }
-        //"UserData": { "Fn::Base64" : { "Fn::Join" : ["", [ "#!/bin/bash -v\n" ]]}}
+        "InstanceType": { "Ref" : "broker-instance_type" },
+        "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [ 
+          "#!/bin/bash -v\n",
+          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackName" },
+          " -r LaunchConfig ",
+          " --region ", { "Ref" : "AWS::Region" }, "\n"
+        ]]}}
       }
     } // log_stash-broker instance 
 

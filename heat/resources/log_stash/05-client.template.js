@@ -17,7 +17,13 @@
       "Properties": {
         "ImageId": { "Fn::Join": [ "-", ["client", { "Ref": "BuildId" }]]},
         "KeyName": { "Ref" : "KeyName" },
-        "InstanceType": { "Ref" : "client-instance_type" }
+        "InstanceType": { "Ref" : "client-instance_type" },
+        "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -v\n",
+          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackName" },
+          " -r LaunchConfig ",
+          " --region ", { "Ref" : "AWS::Region" }, "\n"
+        ]]}}
         //"UserData": { "Fn::Base64" : { "Fn::Join" : ["", [ "#!/bin/bash -v\n" ]]}}
       }
     } // log_stash-client instance 

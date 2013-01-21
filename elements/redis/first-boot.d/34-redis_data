@@ -1,0 +1,10 @@
+#!/bin/bash
+# Install the custom redis config, then restart the service.
+
+set -uex
+
+CNF=/etc/redis/redis.conf
+cp -f $(dirname $0)/redis.conf $CNF
+
+/etc/init.d/redis-server restart
+
