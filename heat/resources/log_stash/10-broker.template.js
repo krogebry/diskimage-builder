@@ -43,7 +43,7 @@
     */
 
     // Instances
-    "log_stash-broker": {
+    "LogStash_Broker": {
       "Type": "AWS::EC2::Instance",
       "Metadata" : { 
         "AWS::CloudFormation::Init": {
@@ -73,9 +73,22 @@
         "InstanceType": { "Ref" : "broker-instance_type" },
         "UserData": { "Fn::Base64" : { "Fn::Join" : ["", [ 
           "#!/bin/bash -v\n",
-          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackName" },
-          " -r LaunchConfig ",
-          " --region ", { "Ref" : "AWS::Region" }, "\n"
+          "echo \"domain novalocal\" > /etc/resolv.conf\n",
+          "echo \"search novalocal\" >> /etc/resolv.conf\n",
+          "echo \"nameserver 10.2.0.1\" >> /etc/resolv.conf\n",
+
+          "mkdir -p /etc/chef\n",
+          "echo \"chef_server_url 'http://15.185.102.107:4000'\" > /etc/chef/client.rb\n",
+          "echo \"validation_key '/etc/chef/validation.pem'\" >> /etc/chef/client.rb\n",
+          "echo \"validation_client_name 'validator'\" >> /etc/chef/client.rb\n",
+          "wget -P /etc/chef/ https://s3.amazonaws.com/open_heat/validation.pem\n",
+
+          //"chef-solo -j '{ \"run_list\": [ \"role[Basenode]\" ]}'\n",
+          "chef-client\n"
+
+          //"/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackName" },
+          //" -r LaunchConfig ",
+          //" --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}}
       }
     } // log_stash-broker instance 

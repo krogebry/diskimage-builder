@@ -1,0 +1,6 @@
+#!/bin/bash
+##
+# Install java
+
+DEBIAN_FRONTEND=noninteractive apt-get -y install openjdk-7-jre-headless
+

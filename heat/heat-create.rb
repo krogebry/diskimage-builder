@@ -19,9 +19,8 @@ fs_unique_build_dir = "%s/%s" % [fs_build_dir,build_id]
 ALog = Logger.new( STDOUT )
 
 
-        # "ImageId": { "Fn::Join": [ "-", "broker", { "Ref": "BuildId" }]},
-                # "KeyName": { "Fn::Join": [ "-", "key", { "Ref": "BuildId" }]},
-
+# "ImageId": { "Fn::Join": [ "-", "broker", { "Ref": "BuildId" }]},
+# "KeyName": { "Fn::Join": [ "-", "key", { "Ref": "BuildId" }]},
 
 
 begin

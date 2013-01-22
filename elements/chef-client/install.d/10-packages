@@ -1,5 +1,0 @@
-##
-# Install chef-client package.
-
-apt-get install -y chef
-

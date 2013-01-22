@@ -1,0 +1,6 @@
+#!/bin/bash
+##
+# Install chef-client package.
+
+DEBIAN_FRONTEND=noninteractive apt-get install -y chef
+
