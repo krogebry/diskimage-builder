@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for node in `nova list |grep log_stash|awk '{print $8}'|awk -F= '{print $2}'`
+do
+  ssh -i ~/dev/diskimage-builder/heat/builds/current/key.pem root@$node $1
+done
