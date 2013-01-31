@@ -1,0 +1,9 @@
+#!/bin/bash
+##
+# Install packages required for a private chef server instance.
+
+
+
+#DEBIAN_FRONTEND=noninteractive apt-get -y install ruby1.9.1-dev chef chef-server-api chef-server-webui
+#gem install -y chef-server
+
