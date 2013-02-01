@@ -2,7 +2,10 @@
 ##
 # Install packages required for a private chef server instance.
 
+cp /tmp/in_target.d/private-chef_1.2.8.2-1.ubuntu.11.04_amd64.deb /opt/
+DEBIAN_FRONTEND=noninteractive dpkg -i /opt/private-chef_1.2.8.2-1.ubuntu.11.04_amd64.deb
 
+#private-chef-ctl reconfigure
 
 #DEBIAN_FRONTEND=noninteractive apt-get -y install ruby1.9.1-dev chef chef-server-api chef-server-webui
 #gem install -y chef-server

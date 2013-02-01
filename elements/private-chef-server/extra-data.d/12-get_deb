@@ -1,0 +1,17 @@
+#!/bin/bash
+# Copy over the private chef deb file.
+# We could eventually roll this package into a repo on keg or similar, however
+#   for now I'm going to pull it off the local box because it's easy.
+
+set -e
+source $_LIB/die
+[ -n "$TMP_HOOKS_PATH." ] || die "Temp hook path not set"
+
+#if [ -e ~/.ssh/authorized_keys ]; then
+   #cat ~/.ssh/authorized_keys > $TMP_HOOKS_PATH/ssh-authorized-keys
+#fi
+
+cp ~/private-chef_1.2.8.2-1.ubuntu.11.04_amd64.deb $TMP_HOOKS_PATH/
+
+echo "--------cp dev------"
+ls -al $TMP_HOOKS_PATH

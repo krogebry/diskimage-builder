@@ -1,0 +1,6 @@
+#!/bin/bash
+##
+# Install packages required for a private chef server instance.
+
+private-chef-ctl reconfigure
+
