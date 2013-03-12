@@ -1,6 +1,7 @@
 #!/bin/bash
 
-BUILD_ID=`uuidgen`
+#BUILD_ID=`uuidgen`
+BUILD_ID="d0e87e8c-e06e-43da-b175-9f1f7ced02e9"
 #BUILD_ID="e42de8d5-0100-4f18-b1d7-dffc8b8ea887"
 
 mkdir -p images/${BUILD_ID}
@@ -8,23 +9,23 @@ mkdir -p images/${BUILD_ID}
 CORE_ELEMENTS="base vm chef-client heat-jeos local-config"
 
 ## Create a simple client that runs nginx.
-./bin/disk-image-create -o images/${BUILD_ID}/client log_stash-jar log_stash-client ${CORE_ELEMENTS}
+#./bin/disk-image-create -o images/${BUILD_ID}/client log_stash-jar log_stash-client ${CORE_ELEMENTS}
 glance image-create --disk-format qcow2 --container-format bare --file images/${BUILD_ID}/client.qcow2 --name client-${BUILD_ID}
 
 ## Clients deliver logs to the broker, which is basically just redis.
-./bin/disk-image-create -o images/${BUILD_ID}/broker redis ${CORE_ELEMENTS}
+#./bin/disk-image-create -o images/${BUILD_ID}/broker redis ${CORE_ELEMENTS}
 glance image-create --disk-format qcow2 --container-format bare --file images/${BUILD_ID}/broker.qcow2 --name broker-${BUILD_ID}
 
 ## The indexer talks to the broker for work items.
-./bin/disk-image-create -o images/${BUILD_ID}/indexer log_stash-jar log_stash-indexer ${CORE_ELEMENTS}
+#./bin/disk-image-create -o images/${BUILD_ID}/indexer log_stash-jar log_stash-indexer ${CORE_ELEMENTS}
 glance image-create --disk-format qcow2 --container-format bare --file images/${BUILD_ID}/indexer.qcow2 --name indexer-${BUILD_ID}
 
 ## The indexer writes it's data to the elastic search service.
-./bin/disk-image-create -o images/${BUILD_ID}/elastic_search log_stash-elastic_search ${CORE_ELEMENTS}
+#./bin/disk-image-create -o images/${BUILD_ID}/elastic_search log_stash-elastic_search ${CORE_ELEMENTS}
 glance image-create --disk-format qcow2 --container-format bare --file images/${BUILD_ID}/elastic_search.qcow2 --name elastic_search-${BUILD_ID}
 
 ## Finally, we use the web interface to view the data from e_s.
-./bin/disk-image-create -o images/${BUILD_ID}/log_web log_stash-jar log_stash-web ${CORE_ELEMENTS}
+#./bin/disk-image-create -o images/${BUILD_ID}/log_web log_stash-jar log_stash-web ${CORE_ELEMENTS}
 glance image-create --disk-format qcow2 --container-format bare --file images/${BUILD_ID}/log_web.qcow2 --name log_web-${BUILD_ID}
 
 #cd heat
